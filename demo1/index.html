@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./jquery-2.1.0.js"></script>
+    <style>
+        *{margin: 0;padding: 0}
+        li{list-style: none}
+        .y-lun{width: 50%;margin: auto;overflow: hidden;border: 1px solid}
+        .y-box{width: 80%;margin: auto;overflow: hidden;}
+        .y-list{overflow: hidden;}
+        .y-list >*{width: 150px}
+        .y-list >* img{width: 100%}
+    </style>
+</head>
+<body>
+    <h5>轮播图</h5>
+    <div class="y-lun">
+        <div class="y-box">
+            <ul class="y-list" data-type="">
+                <li><img src="./img/1.png" alt=""></li>
+                <li><img src="./img/2.png" alt=""></li>
+                <li><img src="./img/3.png" alt=""></li>
+                <li><img src="./img/4.png" alt=""></li>
+            </ul>
+        </div>
+        <p class="y-click">
+            <span><</span>
+            <span>></span>
+        </p> 
+    </div>
+    <!-- <div class="y-lun">
+            <div class="y-box">
+                <ul class="y-list" data-type="">
+                    <li><img src="./img/1.png" alt=""></li>
+                    <li><img src="./img/2.png" alt=""></li>
+                    <li><img src="./img/3.png" alt=""></li>
+                    <li><img src="./img/4.png" alt=""></li>
+                </ul>
+            </div>
+            <p class="y-click">
+                <span><</span>
+                <span>></span>
+            </p> 
+        </div> -->
+    <h5>无缝滚动</h5>
+    <div class="y-gun">
+        
+    </div>
+</body>
+</html>
+<script>
+    var swipwer = {
+        idx:0,sudu:3000,sudu1:500,go:'right',spl:0,length:0,T:{},
+        func:function(self){
+            self.idx +=self.spl;
+            if(self.idx>this.length*2-1 && (self.go == 'left' || self.go == 'top')){
+                $('.y-list').animate({'margin-left':-$('.y-list').children().width()*self.idx + 'px'},self.sudu1);
+                self.idx = this.length;
+                $('.y-list').animate({'margin-left':-$('.y-list').children().width()*self.idx + 'px'},0);
+            };
+            if(self.idx+1 == this.length  && (self.go == 'right' || self.go == 'button')){
+                $('.y-list').animate({'margin-left':-$('.y-list').children().width()*self.idx + 'px'},self.sudu1);
+                self.idx = this.length*2-1;
+                $('.y-list').animate({'margin-left':-$('.y-list').children().width()*self.idx + 'px'},0);
+            }else{
+                 $('.y-list').animate({'margin-left':-$('.y-list').children().width()*self.idx + 'px'},self.sudu1);
+            };
+        },
+        over:function(){
+            var _this = this;
+            $('.y-lun').hover(function(){ clearInterval(_this.T)},function(){ _this.T = setInterval(function(){_this.func(_this)},_this.sudu);})
+        },
+        y_click:function(){
+            var _this = this;
+            if(!$('.y-click').length){return;};
+            $('.y-click span').click(function(){
+                var index =  $(this).index();
+                if(index == 1){_this.go = 'right';_this.spl = -1;}else{ _this.go = 'left';_this.spl = 1; };
+                _this.func(_this);
+            })
+        },
+        heng:function(){
+            var list = $('.y-list').children();
+            if(!$('.y-list').attr('data-type')){ list.width($('.y-box').width());};
+            $('.y-list').width(list.width()*list.length);
+            list.css({'float':'left'});
+        },
+        shu:function(){
+            var list = $('.y-list').children();
+            list.css('display','block');
+        },
+        run:function(){
+            this.idx = $('.y-list').children().length;
+            this.length = $('.y-list').children().length;
+            $('.y-list').html($('.y-list').html() + $('.y-list').html() +$('.y-list').html());
+            if(this.go == 'left' || this.go == 'right') {this.heng();}else{this.shu()};
+            if(this.go == 'left' || this.go == 'top'){this.spl = 1}else{this.spl = -1};
+            $('.y-list').css('margin-left',-$('.y-list').children().width()*this.idx + 'px');
+            var _this = this;
+            this.T = setInterval(function(){_this.func(_this)},_this.sudu);
+            this.over();
+            this.y_click();
+        }
+    };
+    // y-list data-type属性为真时检测为无缝滚动否则为轮播图
+    swipwer.go='right';//动画方向,left,right,默认为left
+    swipwer.sudu1=300;//图片动画时间，默认为500毫秒
+    swipwer.sudu=2000;//轮播动画时间，默认为3000毫秒
+    swipwer.run();
+</script>
